@@ -11,10 +11,13 @@
 // Interaction: vertical drag (200px = full range, Shift = fine 800px), wheel,
 // double-click resets, keyboard arrows. Log params drag in normalised space.
 
-import { memo, useCallback, useRef, type KeyboardEvent, type PointerEvent, type WheelEvent } from "react";
+import { createContext, memo, useCallback, useContext, useRef, type KeyboardEvent, type PointerEvent, type WheelEvent } from "react";
 import { cn } from "@/lib/cn";
 import { PARAMS, formatParam, fromNorm, paramIndex, toNorm, type ParamSpec } from "@/lib/insanity/params";
 import { useParamIndex } from "./InsanityContext";
+
+/** Multiplies every knob's size. The mobile layout sets it above 1 so knobs are big enough for fingers. */
+export const KnobScaleContext = createContext(1);
 
 const ARC_START = -135;
 const ARC_SWEEP = 270;
@@ -46,7 +49,8 @@ interface DialProps {
   onReset: () => void;
 }
 
-const Dial = memo(function Dial({ norm, origin, size, color, label, display, title, onNorm, onReset }: DialProps) {
+const Dial = memo(function Dial({ norm, origin, size: baseSize, color, label, display, title, onNorm, onReset }: DialProps) {
+  const size = Math.round(baseSize * useContext(KnobScaleContext));
   const drag = useRef<{ y: number; n: number } | null>(null);
   const onDown = useCallback((e: PointerEvent<HTMLDivElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId);

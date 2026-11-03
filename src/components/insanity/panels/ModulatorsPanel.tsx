@@ -107,7 +107,7 @@ const Block = memo(function Block({ kind, start, hist }: { kind: Kind; start: nu
   });
 
   return (
-    <div className="relative">
+    <div className="relative max-lg:min-w-[720px]">
       <div className="grid grid-cols-8 gap-x-0.5">
         {Array.from({ length: 8 }, (_, c) => {
           const i = start + c;

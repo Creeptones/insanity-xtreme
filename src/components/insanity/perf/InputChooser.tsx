@@ -32,8 +32,15 @@ function midiLine(m: MidiState): string {
 
 const PC_KEYS = ["A", "W", "S", "E", "D", "F", "T", "G", "Y", "H", "U", "J", "K"];
 
+/** True on phones/tablets: no physical keyboard to speak of, so offer the on-screen keys instead. */
+function useTouchOnly(): boolean {
+  const [touch] = useState(() => typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches && !window.matchMedia("(any-pointer: fine)").matches);
+  return touch;
+}
+
 export function InputChooser({ onStart, busy }: { onStart: () => Promise<void>; busy: boolean }): JSX.Element {
   const perf = usePerf();
+  const touchOnly = useTouchOnly();
   const m = useMidi();
   const midiReady = m.enabled && m.devices.some((d) => !d.endsWith("(offline)"));
   const midiBlocked = m.permission === "unsupported" || m.permission === "denied";
@@ -77,7 +84,13 @@ export function InputChooser({ onStart, busy }: { onStart: () => Promise<void>; 
         onClick={() => void startPc()}
         className="flex flex-col items-start gap-2 rounded-md border-2 border-red-500 bg-red-950/50 p-4 text-left transition hover:bg-red-900/50 disabled:opacity-50"
       >
-        <span className="text-base font-black uppercase tracking-widest text-white">Play with PC keyboard</span>
+        <span className="text-base font-black uppercase tracking-widest text-white">
+          {touchOnly ? "Play on screen" : "Play with PC keyboard"}
+        </span>
+        {touchOnly ? (
+          <span className="text-xs text-zinc-300">Tap the keyboard pinned to the bottom of the page.</span>
+        ) : (
+        <>
         <span className="flex flex-wrap gap-0.5">
           {PC_KEYS.map((k) => (
             <kbd key={k} className="min-w-5 rounded-[3px] border border-zinc-600 bg-zinc-800 px-1 text-center font-mono text-[10px] text-zinc-200">
@@ -86,12 +99,15 @@ export function InputChooser({ onStart, busy }: { onStart: () => Promise<void>; 
           ))}
         </span>
         <span className="text-xs text-zinc-300">Z / X shift the octave, C / V change velocity.</span>
+        </>
+        )}
       </button>
     </div>
   );
 }
 
-export function InputStatus(): JSX.Element {
+/** `inline`: render in the page flow (mobile jump bar) instead of floating bottom-right. */
+export function InputStatus({ inline = false }: { inline?: boolean } = {}): JSX.Element {
   const perf = usePerf();
   const m = useMidi();
   const online = m.devices.filter((d) => !d.endsWith("(offline)"));
@@ -107,7 +123,12 @@ export function InputStatus(): JSX.Element {
 
   const canConnect = !m.enabled && m.permission !== "unsupported" && m.permission !== "denied";
   return (
-    <div className="fixed bottom-3 right-3 z-40 flex items-center gap-1.5 rounded-md border border-zinc-700 bg-black/85 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-300 shadow-lg backdrop-blur">
+    <div
+      className={cn(
+        "flex items-center gap-1.5 rounded-md border border-zinc-700 bg-black/85 px-2 py-1 text-[10px] uppercase tracking-wider text-zinc-300",
+        inline ? "min-w-0 shrink-0" : "fixed bottom-3 right-3 z-40 shadow-lg backdrop-blur",
+      )}
+    >
       {notice ? <span className="font-bold text-emerald-400">{notice}</span> : null}
       <span className={cn("h-2 w-2 rounded-full", online.length > 0 ? "bg-emerald-400 shadow-[0_0_6px_#34d399]" : "bg-zinc-600")} />
       {online.length > 0 ? (

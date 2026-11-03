@@ -45,7 +45,7 @@ export function ChordMemoryPanel(): JSX.Element {
         <RawKnob label="Strum" value={chord.strumMs} min={0} max={250} defaultValue={0} color={ACCENTS[4]} onChange={(v) => perf.update("chord", { strumMs: v })} format={(v) => `${Math.round(v)}ms`} />
         {flash ? <Label className="text-amber-400">{flash}</Label> : null}
       </div>
-      <div className="mt-1 grid grid-cols-8 gap-[2px]">
+      <div className="mt-1 grid grid-cols-8 gap-[2px] max-lg:grid-cols-4 max-lg:gap-1">
         {chord.slots.map((s, i) => (
           <button
             key={i}

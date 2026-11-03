@@ -88,10 +88,10 @@ export function TopBar(): JSX.Element {
       </div>
 
       {/* preset slot */}
-      <div className="flex min-w-0 flex-1 items-center gap-1 rounded-[3px] border border-zinc-800 bg-black/60 px-1 py-0.5">
+      <div className="flex min-w-0 flex-1 items-center gap-1 rounded-[3px] border border-zinc-800 bg-black/60 px-1 py-0.5 max-lg:basis-full max-lg:flex-wrap">
         <span className="text-[9px] font-bold uppercase text-zinc-500">PRESET:</span>
         <button type="button" title="Previous preset" onClick={() => session.step(-1)} className="px-0.5 text-[10px] text-zinc-400 hover:text-white">◀</button>
-        <div className="min-w-0 flex-1" aria-live="polite">
+        <div className="min-w-0 flex-1 max-lg:min-w-[50%]" aria-live="polite">
           <div className="truncate font-mono text-[10px] font-bold uppercase text-amber-300" title={state.presetName}>{state.presetName}</div>
           {state.message ? <div className="truncate text-[8px] text-zinc-400">{state.message}</div> : null}
         </div>

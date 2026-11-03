@@ -25,7 +25,7 @@ const OscColumn = memo(function OscColumn({ i }: { i: number }): JSX.Element {
 /** "GLOBAL EVERYTHING": eight oscillator columns. */
 export const OscillatorsPanel = memo(function OscillatorsPanel(): JSX.Element {
   return (
-    <Section title="Global Everything" badge="(8x)" className="h-full" bodyClassName="grid grid-cols-8 gap-0.5">
+    <Section title="Global Everything" badge="(8x)" className="h-full" bodyClassName="grid grid-cols-8 gap-0.5 max-lg:grid-cols-2 max-lg:gap-1.5">
       {Array.from({ length: OSC_COUNT }, (_, k) => (
         <OscColumn key={k} i={k + 1} />
       ))}

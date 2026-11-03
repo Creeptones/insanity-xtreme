@@ -136,7 +136,7 @@ const WtCell = memo(function WtCell({ i }: { i: number }): JSX.Element {
 /** "WAVETABLE UNIVERSE": a live waveform preview per oscillator; click one to make it a wavetable. */
 export const WavetablePanel = memo(function WavetablePanel(): JSX.Element {
   return (
-    <Section title="Wavetable Universe" className="h-full" bodyClassName="grid grid-cols-4 content-start gap-0.5">
+    <Section title="Wavetable Universe" className="h-full" bodyClassName="grid grid-cols-4 content-start gap-0.5 max-lg:grid-cols-2">
       {Array.from({ length: OSC_COUNT }, (_, k) => (
         <WtCell key={k} i={k + 1} />
       ))}

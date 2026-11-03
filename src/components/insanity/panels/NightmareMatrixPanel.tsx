@@ -36,7 +36,7 @@ const Slot = memo(function Slot({ i }: { i: number }): JSX.Element {
 /** "SOUND DESIGNER'S NIGHTMARE MATRIX": all 64 mod-matrix slots as compact strips. */
 export const NightmareMatrixPanel = memo(function NightmareMatrixPanel(): JSX.Element {
   return (
-    <Section title="Sound Designer's Nightmare Matrix" badge="(64x)" className="h-full" bodyClassName="grid grid-cols-6 content-start gap-0.5">
+    <Section title="Sound Designer's Nightmare Matrix" badge="(64x)" className="h-full" bodyClassName="grid grid-cols-6 content-start gap-0.5 max-lg:grid-cols-1 max-lg:gap-1">
       {Array.from({ length: MOD_SLOTS }, (_, k) => (
         <Slot key={k} i={k + 1} />
       ))}

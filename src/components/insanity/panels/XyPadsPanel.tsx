@@ -70,7 +70,7 @@ const XyPad = memo(function XyPad({ i }: { i: number }): JSX.Element {
 /** "XY PADS (16x)": 16 draggable pads bound to xy{i}.x / xy{i}.y. */
 export const XyPadsPanel = memo(function XyPadsPanel(): JSX.Element {
   return (
-    <Section title="XY Pads" badge="(16x)" bodyClassName="grid grid-cols-8 gap-1">
+    <Section title="XY Pads" badge="(16x)" bodyClassName="grid grid-cols-8 gap-1 max-lg:grid-cols-4 max-lg:gap-2">
       {Array.from({ length: XY_COUNT }, (_, k) => (
         <XyPad key={k} i={k + 1} />
       ))}

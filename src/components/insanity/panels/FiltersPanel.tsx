@@ -27,7 +27,7 @@ const BandStrip = memo(function BandStrip({ i }: { i: number }): JSX.Element {
 export const FiltersPanel = memo(function FiltersPanel(): JSX.Element {
   return (
     <Section title="Filters" badge="(32x)" className="h-full" bodyClassName="flex flex-col gap-1">
-      <div className="grid gap-px" style={{ gridTemplateColumns: "repeat(16, minmax(0, 1fr))" }}>
+      <div className="grid gap-px max-lg:![grid-template-columns:repeat(4,minmax(0,1fr))] max-lg:gap-1" style={{ gridTemplateColumns: "repeat(16, minmax(0, 1fr))" }}>
         {Array.from({ length: BANK_BANDS }, (_, k) => (
           <BandStrip key={k} i={k + 1} />
         ))}

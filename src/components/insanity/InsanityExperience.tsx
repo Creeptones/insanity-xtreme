@@ -3,7 +3,7 @@
 // INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition) — the whole page.
 // Layout mirrors the reference screenshot: five dense rows of sections under a top bar.
 
-import { memo, useCallback, useState, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { InsanityProvider, useEngineStarted, useInsanityHost } from "./InsanityContext";
 import {
@@ -16,6 +16,21 @@ import {
   ChaosPanel, EffectsPanel, FiltersPanel, MacroPanel, MasterPanel, ModRoutingPanel, ModulatorsPanel, NightmareMatrixPanel,
   OscillatorsPanel, PerformanceMonitorPanel, SystemPanel, VoicePanel, WavetablePanel, XyPadsPanel,
 } from "./panels";
+import { MobileBoard } from "./MobileBoard";
+
+/** Below this width the page switches to the scrolling, collapsible mobile layout. */
+const MOBILE_QUERY = "(max-width: 1023px)";
+
+function useIsMobile(): boolean {
+  const [mobile, setMobile] = useState(() => typeof window !== "undefined" && window.matchMedia(MOBILE_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_QUERY);
+    const on = (): void => setMobile(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return mobile;
+}
 
 /** Grid cell that stretches whatever <Section> the child renders to the cell height. */
 function Cell({ children, className }: { children: ReactNode; className?: string }): JSX.Element {
@@ -30,7 +45,7 @@ function Row({ cols, children, className }: { cols: string; children: ReactNode;
   );
 }
 
-function PowerOverlay(): JSX.Element | null {
+function PowerOverlay({ mobile }: { mobile: boolean }): JSX.Element | null {
   const host = useInsanityHost();
   const started = useEngineStarted();
   const [busy, setBusy] = useState(false);
@@ -45,7 +60,8 @@ function PowerOverlay(): JSX.Element | null {
       setError(err instanceof Error ? err.message : String(err));
     }
   }, [host]);
-  if (started) return <InputStatus />;
+  // On mobile the input chip lives in the page flow (MobileBoard), clear of the pinned keyboard.
+  if (started) return mobile ? null : <InputStatus />;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-[2px]">
       <div className="flex w-full flex-col items-center gap-4 px-4 text-center">
@@ -54,7 +70,7 @@ function PowerOverlay(): JSX.Element | null {
         </h2>
         <InputChooser onStart={onStart} busy={busy} />
         <p className="max-w-md text-xs text-zinc-400">
-          Every knob on this page is wired to a real synth engine. You can switch inputs any time from the corner.
+          Every knob on this page is wired to a real synth engine. You can switch inputs any time{mobile ? " from the top of the page" : " from the corner"}.
         </p>
         {error ? <p className="max-w-md font-mono text-xs text-red-400">Engine failed to start: {error}</p> : null}
       </div>
@@ -127,17 +143,29 @@ const Board = memo(function Board(): JSX.Element {
   );
 });
 
+function Layout(): JSX.Element {
+  const mobile = useIsMobile();
+  const started = useEngineStarted();
+  return (
+    <main id="main-content" className="min-h-screen bg-[#0a0a0b] text-zinc-200">
+      <h1 className="sr-only">INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition)</h1>
+      {mobile ? (
+        <MobileBoard started={started} />
+      ) : (
+        <div className="overflow-x-auto">
+          <Board />
+        </div>
+      )}
+      <PowerOverlay mobile={mobile} />
+    </main>
+  );
+}
+
 export function InsanityExperience(): JSX.Element {
   return (
     <InsanityProvider>
       <PerformanceProvider>
-        <main id="main-content" className="min-h-screen bg-[#0a0a0b] text-zinc-200">
-          <h1 className="sr-only">INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition)</h1>
-          <div className="overflow-x-auto">
-            <Board />
-          </div>
-          <PowerOverlay />
-        </main>
+        <Layout />
       </PerformanceProvider>
     </InsanityProvider>
   );

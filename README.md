@@ -88,6 +88,13 @@ filter bank, effects and master.
 - Pollen: a granular engine.
 - Exciton: a coupled-resonator lattice synth.
 
+**On phones**
+
+Below 1024px the page becomes one long scroll. Every section is a tab you can
+close to its title bar and reopen; a sticky bar jumps to any section, the
+keyboard stays pinned to the bottom, and knobs grow to finger size. The
+essentials start open and your choices are remembered.
+
 **Everything else**
 
 - 18 factory presets, including "Make It Sound Good™".
