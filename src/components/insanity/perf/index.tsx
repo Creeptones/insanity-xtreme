@@ -11,3 +11,4 @@ export { KeyboardPanel } from "./KeyboardPanel";
 export { ScaleEditorPanel } from "./ScaleEditorPanel";
 export { TuningPanel } from "./TuningPanel";
 export { ChordMemoryPanel } from "./ChordMemoryPanel";
+export { InputChooser, InputStatus } from "./InputChooser";

@@ -63,7 +63,9 @@ All of it is real and all of it is playable.
 - Arpeggiator (up, down, up-down, down-up, random, as played).
 - 16-step, 8-lane step sequencer with per-step velocity, probability and ratchets.
 - Web MIDI input, with a MIDI matrix for transpose, octave, velocity curve,
-  channel filter and key range.
+  channel filter and key range. The start screen lets you pick a MIDI keyboard
+  or your PC keyboard. If you allowed MIDI on an earlier visit, a plugged-in
+  keyboard connects by itself, and hot-plugged devices are picked up live.
 - Chord memory, scale snap and a scale editor.
 - Microtuning: load and save Scala `.scl` files, plus EDO and other tuning presets.
 - On-screen keyboard with pitch-bend and mod-wheel strips.

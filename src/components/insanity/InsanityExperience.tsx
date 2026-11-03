@@ -7,7 +7,7 @@ import { memo, useCallback, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { InsanityProvider, useEngineStarted, useInsanityHost } from "./InsanityContext";
 import {
-  ChordMemoryPanel, KeyboardPanel, MidiMatrixPanel, PerformanceProvider, ScaleEditorPanel, StepSequencerPanel, TuningPanel,
+  ChordMemoryPanel, InputChooser, InputStatus, KeyboardPanel, MidiMatrixPanel, PerformanceProvider, ScaleEditorPanel, StepSequencerPanel, TuningPanel,
 } from "@/components/insanity/perf";
 import {
   AtmospherePanel, HelpPanel, LayerManager, PhysicalModelingPanel, RandomizerPanel, SoundBrowserPanel, SpectralPanel, TopBar,
@@ -35,29 +35,26 @@ function PowerOverlay(): JSX.Element | null {
   const started = useEngineStarted();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const onPower = useCallback(() => {
+  const onStart = useCallback(async () => {
     setBusy(true);
     setError(null);
-    host.start().catch((err: unknown) => {
+    try {
+      await host.start();
+    } catch (err: unknown) {
       setBusy(false);
       setError(err instanceof Error ? err.message : String(err));
-    });
+    }
   }, [host]);
-  if (started) return null;
+  if (started) return <InputStatus />;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-[2px]">
-      <div className="flex flex-col items-center gap-3 px-4 text-center">
-        <button
-          type="button"
-          onClick={onPower}
-          disabled={busy}
-          className="rounded-md border-2 border-red-500 bg-gradient-to-b from-red-600 to-red-950 px-8 py-5 text-lg font-black uppercase tracking-widest text-white shadow-[0_0_40px_rgba(239,68,68,0.6)] transition hover:scale-[1.03] hover:shadow-[0_0_70px_rgba(239,68,68,0.9)] disabled:opacity-70"
-        >
-          {busy ? "UNLEASHING..." : "POWER ON (CLICK TO UNLEASH)"}
-        </button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-[2px]">
+      <div className="flex w-full flex-col items-center gap-4 px-4 text-center">
+        <h2 className="text-2xl font-black uppercase tracking-widest text-white drop-shadow-[0_0_20px_rgba(239,68,68,0.7)]">
+          {busy ? "Unleashing..." : "How do you want to play?"}
+        </h2>
+        <InputChooser onStart={onStart} busy={busy} />
         <p className="max-w-md text-xs text-zinc-400">
-          Browsers only allow sound after a click. Every knob on this page is wired to a real synth engine.
-          Play it with your computer keyboard or a MIDI controller.
+          Every knob on this page is wired to a real synth engine. You can switch inputs any time from the corner.
         </p>
         {error ? <p className="max-w-md font-mono text-xs text-red-400">Engine failed to start: {error}</p> : null}
       </div>
@@ -120,9 +117,6 @@ const Board = memo(function Board(): JSX.Element {
       </Row>
 
       <footer className="flex flex-col items-center gap-1 py-3">
-        <p className="font-mono text-[11px] font-bold uppercase tracking-wider text-red-500">
-          WARNING: MAY CAUSE EXISTENTIAL CRISIS, HEARING DAMAGE, AND/OR SPONTANEOUS COMBUSTION.
-        </p>
         <p className="text-[10px] text-zinc-500">
           <a href="https://ephemera.fm" className="underline decoration-zinc-700 underline-offset-2 hover:text-zinc-300">
             Built in one night by Ephemera — every single knob makes sound.

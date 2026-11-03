@@ -95,6 +95,15 @@ export interface MidiState {
   error: string | null;
   devices: string[];
   monitor: string[];
+  /**
+   * Browser MIDI permission, probed on load without prompting:
+   * "granted" (we auto-connect), "prompt" (needs a click), "denied", "unsupported", or null (not probed yet).
+   */
+  permission: "granted" | "prompt" | "denied" | "unsupported" | null;
+  /** Name of the most recently connected device, for a short "connected" notice. */
+  lastConnected: string | null;
+  /** Whether the computer keyboard plays notes. */
+  pcKeys: boolean;
 }
 
 export const KEY_MAP: Record<string, number> = {
@@ -127,7 +136,7 @@ export class PerformanceEngine {
 
   seqPlaying = false;
   seqPos = -1;
-  midi: MidiState = { supported: null, enabled: false, error: null, devices: [], monitor: [] };
+  midi: MidiState = { supported: null, enabled: false, error: null, devices: [], monitor: [], permission: null, lastConnected: null, pcKeys: true };
 
   private inputs = new Map<string, InputRec>();
   private pressed = new Map<number, number>();
@@ -170,6 +179,7 @@ export class PerformanceEngine {
       window.addEventListener("keyup", up);
       window.addEventListener("blur", blur);
       document.addEventListener("visibilitychange", vis);
+      void this.probeMidi();
       this.unsubs.push(() => {
         window.removeEventListener("keydown", down);
         window.removeEventListener("keyup", up);
@@ -525,6 +535,7 @@ export class PerformanceEngine {
 
   // ---- computer keyboard ----------------------------------------------------
   private onKeyDown(e: KeyboardEvent): void {
+    if (!this.midi.pcKeys) return;
     if (e.ctrlKey || e.metaKey || e.altKey || isEditable(e.target)) return;
     const off = KEY_MAP[e.code];
     if (off !== undefined) {
@@ -543,7 +554,41 @@ export class PerformanceEngine {
     if (KEY_MAP[e.code] !== undefined) this.noteOff(`key:${e.code}`);
   }
 
+  /** Turn computer-keyboard playing on or off. */
+  setPcKeys(on: boolean): void {
+    if (!on) this.releaseSource("key:");
+    this.setMidi({ pcKeys: on });
+  }
+
   // ---- Web MIDI ---------------------------------------------------------------
+  /**
+   * Find out, without prompting, whether MIDI can be used. If the user already granted
+   * access on an earlier visit, connect straight away so a plugged-in keyboard just works.
+   */
+  async probeMidi(): Promise<void> {
+    const nav = typeof navigator !== "undefined" ? navigator : null;
+    if (!nav || typeof nav.requestMIDIAccess !== "function") {
+      this.setMidi({ supported: false, permission: "unsupported" });
+      return;
+    }
+    let state: PermissionState | null = null;
+    try {
+      const status = await nav.permissions?.query({ name: "midi" as PermissionName });
+      state = status?.state ?? null;
+      if (status) {
+        status.onchange = () => {
+          this.setMidi({ permission: status.state });
+          if (status.state === "granted") void this.enableMidi();
+        };
+      }
+    } catch {
+      state = null; // Permissions API doesn't know "midi" here; treat as needing a click.
+    }
+    if (this.disposed) return;
+    this.setMidi({ supported: true, permission: state ?? "prompt" });
+    if (state === "granted") await this.enableMidi();
+  }
+
   async enableMidi(): Promise<void> {
     if (this.midi.enabled) return;
     const nav = typeof navigator !== "undefined" ? navigator : null;
@@ -556,10 +601,10 @@ export class PerformanceEngine {
       if (this.disposed) return;
       this.midiAccess = access;
       access.onstatechange = () => this.bindMidiInputs();
-      this.setMidi({ supported: true, enabled: true, error: null });
+      this.setMidi({ supported: true, enabled: true, error: null, permission: "granted" });
       this.bindMidiInputs();
     } catch (err) {
-      this.setMidi({ supported: true, enabled: false, error: err instanceof Error ? err.message : "MIDI access denied" });
+      this.setMidi({ supported: true, enabled: false, permission: "denied", error: err instanceof Error ? err.message : "MIDI access denied" });
     }
   }
 
@@ -578,11 +623,16 @@ export class PerformanceEngine {
     const a = this.midiAccess;
     if (!a) return;
     const devices: string[] = [];
+    let newest: string | null = null;
     a.inputs.forEach((input) => {
-      devices.push(`${input.name ?? "MIDI input"}${input.state === "connected" ? "" : " (offline)"}`);
+      const name = input.name ?? "MIDI input";
+      const online = input.state === "connected";
+      devices.push(`${name}${online ? "" : " (offline)"}`);
+      // Hot-plug: a device that wasn't in the last list is announced once.
+      if (online && !this.midi.devices.includes(name)) newest = name;
       input.onmidimessage = (e: MIDIMessageEvent) => { if (e.data) this.onMidi(e.data); };
     });
-    this.setMidi({ devices });
+    this.setMidi(newest ? { devices, lastConnected: newest } : { devices });
   }
 
   /** Handle one raw MIDI message (exposed for tests and for hosts that deliver MIDI another way). */
