@@ -11,6 +11,7 @@ import type { ParamGroup } from "@/lib/insanity/params";
 import { useEngineStarted, useInsanityHost, useMeters, useParam } from "../InsanityContext";
 import { ChunkyButton, MeterBar } from "../InsanityPrimitives";
 import { useSession } from "./session";
+import { useViewMode } from "../ViewMode";
 
 export const SOUND_BROWSER_ID = "insanity-sound-browser";
 const ALL_GROUPS: ReadonlySet<ParamGroup> = new Set(RANDOM_GROUPS.map((g) => g.group));
@@ -64,6 +65,7 @@ export function TopBar(): JSX.Element {
     session.apply(randomize(host.values, ALL_GROUPS, 0.6), `RANDOM EVERYTHING #${randomCount}`);
   }, [host, session]);
 
+  const { setView } = useViewMode();
   const cpu = meters ? meters.cpu * 100 : 0;
   const peak = meters ? Math.max(meters.peakL, meters.peakR) : 0;
 
@@ -102,6 +104,14 @@ export function TopBar(): JSX.Element {
         <ChunkyButton onClick={onDelete} title="Delete the current user preset">DELETE</ChunkyButton>
       </div>
 
+      <button
+        type="button"
+        onClick={() => setView("onepager")}
+        title="The best controls on one clean screen"
+        className="rounded-[4px] border border-violet-400 bg-gradient-to-r from-violet-600 to-cyan-600 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-white shadow-[0_0_14px_rgba(139,92,246,0.6)] hover:brightness-110 max-lg:basis-full max-lg:py-2 max-lg:text-sm"
+      >
+        ✦ One Pager
+      </button>
       <ChunkyButton onClick={onRandomAll} title="Randomize every group at 60% chaos (UNDO is in the Randomizer)">RANDOMIZE EVERYTHING</ChunkyButton>
       <ChunkyButton
         danger

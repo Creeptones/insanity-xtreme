@@ -17,6 +17,8 @@ import {
   OscillatorsPanel, PerformanceMonitorPanel, SystemPanel, VoicePanel, WavetablePanel, XyPadsPanel,
 } from "./panels";
 import { MobileBoard } from "./MobileBoard";
+import { OnePager } from "./OnePager";
+import { ViewModeProvider, useViewMode } from "./ViewMode";
 
 /** Below this width the page switches to the scrolling, collapsible mobile layout. */
 const MOBILE_QUERY = "(max-width: 1023px)";
@@ -45,7 +47,7 @@ function Row({ cols, children, className }: { cols: string; children: ReactNode;
   );
 }
 
-function PowerOverlay({ mobile }: { mobile: boolean }): JSX.Element | null {
+function PowerOverlay({ mobile, inlineStatus }: { mobile: boolean; inlineStatus: boolean }): JSX.Element | null {
   const host = useInsanityHost();
   const started = useEngineStarted();
   const [busy, setBusy] = useState(false);
@@ -61,7 +63,7 @@ function PowerOverlay({ mobile }: { mobile: boolean }): JSX.Element | null {
     }
   }, [host]);
   // On mobile the input chip lives in the page flow (MobileBoard), clear of the pinned keyboard.
-  if (started) return mobile ? null : <InputStatus />;
+  if (started) return inlineStatus ? null : <InputStatus />;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-[2px]">
       <div className="flex w-full flex-col items-center gap-4 px-4 text-center">
@@ -146,17 +148,21 @@ const Board = memo(function Board(): JSX.Element {
 function Layout(): JSX.Element {
   const mobile = useIsMobile();
   const started = useEngineStarted();
+  const { view } = useViewMode();
+  const onePager = view === "onepager";
   return (
     <main id="main-content" className="min-h-screen bg-[#0a0a0b] text-zinc-200">
       <h1 className="sr-only">INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition)</h1>
-      {mobile ? (
+      {onePager ? (
+        <OnePager mobile={mobile} />
+      ) : mobile ? (
         <MobileBoard started={started} />
       ) : (
         <div className="overflow-x-auto">
           <Board />
         </div>
       )}
-      <PowerOverlay mobile={mobile} />
+      <PowerOverlay mobile={mobile} inlineStatus={mobile || onePager} />
     </main>
   );
 }
@@ -165,7 +171,9 @@ export function InsanityExperience(): JSX.Element {
   return (
     <InsanityProvider>
       <PerformanceProvider>
-        <Layout />
+        <ViewModeProvider>
+          <Layout />
+        </ViewModeProvider>
       </PerformanceProvider>
     </InsanityProvider>
   );

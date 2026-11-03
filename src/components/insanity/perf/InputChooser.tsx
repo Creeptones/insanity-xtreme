@@ -129,7 +129,7 @@ export function InputStatus({ inline = false }: { inline?: boolean } = {}): JSX.
         inline ? "min-w-0 shrink-0" : "fixed bottom-3 right-3 z-40 shadow-lg backdrop-blur",
       )}
     >
-      {notice ? <span className="font-bold text-emerald-400">{notice}</span> : null}
+      {notice ? <span className="max-w-[11rem] truncate whitespace-nowrap font-bold text-emerald-400">{notice}</span> : null}
       <span className={cn("h-2 w-2 rounded-full", online.length > 0 ? "bg-emerald-400 shadow-[0_0_6px_#34d399]" : "bg-zinc-600")} />
       {online.length > 0 ? (
         <span title={online.join(", ")} className="max-w-48 truncate">MIDI: {online.join(", ")}</span>

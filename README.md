@@ -88,6 +88,14 @@ filter bank, effects and master.
 - Pollen: a granular engine.
 - Exciton: a coupled-resonator lattice synth.
 
+**ONE PAGER**
+
+Don't need all 799? Hit **✦ One Pager** for the stripped-down view: two
+oscillators, a big filter with a cutoff × resonance pad, the amp envelope drawn
+live, effects, master, a glowing scope and the keyboard, all on one screen.
+Same engine and sound; **Full Insanity →** takes you back. Short laptop screens
+get the page scaled to fit; phones get the cards stacked.
+
 **On phones**
 
 Below 1024px the page becomes one long scroll. Every section is a tab you can
