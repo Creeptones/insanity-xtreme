@@ -1,0 +1,14 @@
+export { SystemPanel } from "./SystemPanel";
+export { OscillatorsPanel } from "./OscillatorsPanel";
+export { FiltersPanel } from "./FiltersPanel";
+export { EffectsPanel } from "./EffectsPanel";
+export { ModulatorsPanel } from "./ModulatorsPanel";
+export { MacroPanel } from "./MacroPanel";
+export { XyPadsPanel } from "./XyPadsPanel";
+export { VoicePanel } from "./VoicePanel";
+export { WavetablePanel } from "./WavetablePanel";
+export { ChaosPanel } from "./ChaosPanel";
+export { NightmareMatrixPanel } from "./NightmareMatrixPanel";
+export { ModRoutingPanel } from "./ModRoutingPanel";
+export { PerformanceMonitorPanel } from "./PerformanceMonitorPanel";
+export { MasterPanel } from "./MasterPanel";

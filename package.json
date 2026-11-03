@@ -1,0 +1,35 @@
+{
+  "name": "insanity-xtreme",
+  "version": "1.0.0",
+  "private": true,
+  "description": "INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition): a browser synth where every knob actually works.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build:worklet": "node scripts/build-worklet.mjs",
+    "dev": "npm run build:worklet && vite",
+    "build": "npm run build:worklet && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx src/lib/insanity/perf/__tests__/perf.test.ts"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "tailwind-merge": "2.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.19.35",
+    "@types/react": "18.3.28",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "5.2.0",
+    "autoprefixer": "10.4.27",
+    "esbuild": "0.28.0",
+    "postcss": "8.5.14",
+    "tailwindcss": "3.4.19",
+    "tsx": "4.22.4",
+    "typescript": "5.9.3",
+    "vite": "7.3.7"
+  }
+}
