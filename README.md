@@ -1,5 +1,9 @@
 # INSANITY XTREME PRO MAX ULTRA DELUXE v∞ (It Actually Works Edition)
 
+> **Original concept by [u/PoloVG](https://www.reddit.com/user/PoloVG/).**
+> This synth exists because of [his post on r/FREEVSTS](https://www.reddit.com/r/FREEVSTS/comments/1xmfrz4/insanity_xtreme_pro_max_ultra_deluxe/).
+> The name, the front panel and the DESTROY CPU button are all his idea. We just wired it up.
+
 A browser synth with 799 parameters, and every single knob makes sound.
 
 ![INSANITY XTREME running in the browser](docs/screenshot.png)
@@ -8,7 +12,8 @@ A browser synth with 799 parameters, and every single knob makes sound.
 
 ## How this happened
 
-Someone on r/freevst posted a joke about the wave of AI-made plugins. It was an
+[u/PoloVG posted a joke on r/FREEVSTS](https://www.reddit.com/r/FREEVSTS/comments/1xmfrz4/insanity_xtreme_pro_max_ultra_deluxe/)
+about the wave of AI-made plugins. It was an
 AI-generated screenshot of a plugin that does not exist, with hundreds of knobs,
 a "DESTROY CPU" button and a name that keeps on going. The link to the "detailed
 presentation" was a rickroll.
